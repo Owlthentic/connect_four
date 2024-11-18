@@ -12,7 +12,7 @@ class PlayerConsole(PlayerBase):
     def __init__(self, player: GameToken):  # Red or Yellow player
         super().__init__(player)
         # self._display = DisplayConsole()
-        self._input = InputConsole()
+        self._input = InputConsole() #more changes
 
     def play_turn(self) -> int:
         # TODO: return desired column from user input (0..6)
