@@ -3,7 +3,7 @@ from game_token import GameToken
 from game_state import GameState
 from drop_state import DropState
 
-
+# this line is for testing, can be deleted
 class PlayerCoordinator:
     def __init__(self):
         # initialize players
