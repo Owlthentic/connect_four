@@ -60,10 +60,11 @@ class PlayerCoordinator:
                     count = 1 # count the current token
                     #check the next 3 tokens in each direction
                     for i in range(1,4):
-                        if self._board[row+di*i][col+dj*i] == current_token: 
-                            count +=1
-                        else:
-                            break
+                        if col + dj*i < 7:
+                            if self._board[row+di*i][col+dj*i] == current_token: 
+                                count +=1
+                            else:
+                                break
                     if count == 4:
                         #set gamestate to won, if there are 4 consecutives tokens with the same colour
                         if current_token == GameToken.RED: 
