@@ -40,6 +40,7 @@ class PlayerConsole(PlayerBase):
                 
     def draw_board(self, board: list, state: GameState):
         self._clear_console()
+        Ansi.reset()
 
         # TODO: draw grid with tokens
         print("┌───┬───┬───┬───┬───┬───┬───┐")
@@ -61,9 +62,9 @@ class PlayerConsole(PlayerBase):
                 print("└───┴───┴───┴───┴───┴───┴───┘")
 
         if state == GameState.TURN_YELLOW:
-            print("Es ist der Zug von Gelb")
+            print("Es ist der Zug von \033[33mGelb")
         elif state == GameState.TURN_RED:
-            print("Es ist der Zug von Rot.")
+            print("Es ist der Zug von \033[31mRot.")
 
 
 if __name__ == '__main__':
