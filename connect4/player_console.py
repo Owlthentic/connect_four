@@ -1,5 +1,5 @@
-from display_base import DisplayBase
 from input_console import InputConsole
+from display_console import DisplayConsole
 from player_base import PlayerBase
 from game_state import GameState
 from game_token import GameToken
@@ -11,70 +11,80 @@ import os
 class PlayerConsole(PlayerBase):
     def __init__(self, player: GameToken):  # Red or Yellow player
         super().__init__(player)
-        # self._display = DisplayConsole()
+        self.display_console = DisplayConsole()
         self._input = InputConsole()
+        
+        self._base_color = 0
+        if player == GameToken.RED:
+            self._player_color = 1
+        elif player == GameToken.YELLOW:
+            self._player_color = 3
+        else:
+            self._player_color = 2
+
+
+    def draw_board(self, board:list, gamestate:GameState):
+
+        self.display_console.draw_grid()
+
+        for y_pos, row in enumerate(board):
+            for x_pos, cell in enumerate(row):
+                if cell == GameToken.RED:
+                    Ansi.set_foreground(1, False)
+                    self.display_console.draw_token(x_pos, y_pos)
+                if cell == GameToken.YELLOW:
+                    Ansi.set_foreground(3, False)
+                    self.display_console.draw_token(x_pos, y_pos)
+                else:
+                    pass
+        
+        Ansi.set_foreground(self._base_color, False)
+        print("Es ist der Zug von ", end="")
+        Ansi.set_foreground(self._player_color, False)
+
+        if gamestate == GameState.TURN_YELLOW:
+            print("Gelb")
+        elif gamestate == GameState.TURN_RED:
+            print("Rot")
+
+        Ansi.set_foreground(self._base_color, False)
+
+        
 
     def play_turn(self) -> int:
-        # TODO: return desired column from user input (0..6)
-        drop_pos = 3
-        input = InputConsole()
-        while True:
-            if input.key_pressed():
-                key = input.read_key()  # Lese die gedrückte Taste
-                if key == Keys.DOWN:
-                    return drop_pos
-                elif key == Keys.LEFT:
-                    if drop_pos > 0:
-                        drop_pos -= 1
-                    else:
-                        pass
-                elif key == Keys.RIGHT:
-                    if drop_pos < 6:
-                        drop_pos += 1
-                    else:
-                        pass
-    def _clear_console(self):
-        os.system('clear')
-        os.system('cls')    
+        Ansi.set_foreground( self._player_color, False)
+        pos = self.select_column()
 
-                
-    def draw_board(self, board: list, state: GameState):
-        self._clear_console()
+        Ansi.set_foreground(self._base_color, False)
+        return(pos)
 
-        # TODO: draw grid with tokens
-        print("┌───┬───┬───┬───┬───┬───┬───┐")
-        row_count = 0
-        for row in board:
-            print("|", end="")
-            for cell in row:
-                if cell == GameToken.RED:
-                    print(" \033[31m●\033[0m ", end="|")
-                elif cell == GameToken.YELLOW:
-                    print(" \033[33m●\033[0m ", end="|")
-                else:
-                    print("   ", end="|")
-            print()
-            if row_count <=4:
-                print("├───┼───┼───┼───┼───┼───┼───┤")
-                row_count += 1
-            elif row_count == 5:
-                print("└───┴───┴───┴───┴───┴───┴───┘")
+    def select_column(self):
+        pos = 2
+        key_pressed = Keys.UNKNOWN
+        while key_pressed != Keys.ESC:
+            self.display_console.draw_input(pos)
+            key_pressed = self._input.read_key()
 
-        if state == GameState.TURN_YELLOW:
-            print("Es ist der Zug von Gelb")
-        elif state == GameState.TURN_RED:
-            print("Es ist der Zug von Rot.")
+            if key_pressed == Keys.RIGHT and pos < 6:
+                pos += 1
 
+            elif key_pressed == Keys.LEFT and pos > 0:
+                pos -= 1
+            
+            elif key_pressed == Keys.ENTER or key_pressed == Keys.DOWN:
+                return pos
+            
+        print("pressed Escape")  
 
 if __name__ == '__main__':
     board = [[' ' for _ in range(7)] for _ in range(6)]
     board[5][0] = GameToken.RED  # [Y][X]
+    board[4][3] = GameToken.YELLOW
     p = PlayerConsole(GameToken.YELLOW)
 
-    Ansi.clear_screen()
-    Ansi.reset()
     p.draw_board(board, GameState.TURN_YELLOW)
     pos = p.play_turn()
-    Ansi.reset()
-    Ansi.gotoXY(1, 20)
-    print(f"Position: {pos}")
+    print(pos)
+
+
+

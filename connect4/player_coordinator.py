@@ -2,6 +2,7 @@ from player_console import PlayerConsole
 from game_token import GameToken
 from game_state import GameState
 from drop_state import DropState
+from ansi import Ansi
 
 # this line is for testing, can be deleted
 class PlayerCoordinator:
@@ -39,10 +40,12 @@ class PlayerCoordinator:
         gamestate = self.get_state()
         if gamestate == GameState.WON_RED:
             self._player_red.draw_board(self._board, gamestate)
-            print("Rot hat das Spiel gewonnen!!")
+            print("\033[31mRot hat das Spiel gewonnen!!")
+            Ansi.reset()
         if gamestate == GameState.WON_YELLOW:
             self._player_yellow.draw_board(self._board, gamestate)
-            print("Gelb hat das Spiel gewonnen!!")
+            print("\033[33mGelb hat das Spiel gewonnen!!")
+            Ansi.reset()
         if gamestate == GameState.DRAW:
             self._player_yellow.draw_board(self._board, gamestate) 
             print("Unentschieden!!")
