@@ -87,9 +87,6 @@ class DisplayConsole(DisplayBase):
         Ansi.gotoXY(0, 16)
 
 
-    
-
-
 
 if __name__ == '__main__':
     fc = DisplayConsole()
