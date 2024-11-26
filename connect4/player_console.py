@@ -38,14 +38,27 @@ class PlayerConsole(PlayerBase):
                 else:
                     pass
         
-        Ansi.set_foreground(self._base_color, False)
-        print("Es ist der Zug von ", end="")
-        Ansi.set_foreground(self._player_color, False)
-
-        if gamestate == GameState.TURN_YELLOW:
-            print("Gelb")
-        elif gamestate == GameState.TURN_RED:
+        if gamestate == 0:
+            Ansi.set_foreground(self._base_color, False)
+            print("Es ist der Zug von ", end="")
+            Ansi.set_foreground(self._player_color, False)
             print("Rot")
+        elif gamestate == 1:
+            Ansi.set_foreground(self._base_color, False)
+            print("Es ist der Zug von ", end="")
+            Ansi.set_foreground(self._player_color, False)
+            print("Gelb")
+        elif gamestate == 2:
+            print("Rot hat gewonnen!!")
+            Ansi.set_foreground(self._player_color, False)
+        elif gamestate == 3:
+            print("Gelb hat gewonnen!!")
+            Ansi.set_foreground(self._player_color, False)
+        elif gamestate == 4:
+            Ansi.set_foreground(self._base_color, False)
+            print("Unentschieden...")
+            Ansi.set_foreground(self._player_color, False)
+            
 
         Ansi.set_foreground(self._base_color, False)
 
