@@ -19,18 +19,14 @@ class PlayerCoordinator:
         # TODO check if the column is valid (0..6) => return the appropriate DropState
         if column not in range(0, 7):
             return DropState.COLUMN_INVALID
-
         # TODO check if the column is full => return the appropriate DropState   
         if self._board[0][column] != GameToken.EMPTY:
             return DropState.COLUMN_FULL
-
         # TODO insert token into board (column = column_to_drop)
         for i in range(5,-1,-1):
             if self._board[i][column] == GameToken.EMPTY:
-                  
                 self._board[i][column] = player
                 self._game_state = self._calculate_state()
-                
                 return DropState.DROP_OK
 
     def get_state(self):

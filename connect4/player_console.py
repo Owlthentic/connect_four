@@ -59,7 +59,7 @@ class PlayerConsole(PlayerBase):
         return(pos)
 
     def select_column(self):
-        pos = 2
+        pos = 3
         key_pressed = Keys.UNKNOWN
         while key_pressed != Keys.ESC:
             self.display_console.draw_input(pos)
