@@ -29,8 +29,8 @@ class GameLogic(GameLogicBase):
                 self._game_state = self._calculate_state()
                 return DropState.DROP_OK
         
-    def get_status(self):
-        print(f"gamelogic get status {self._game_state}")
+    def get_state(self):
+        print(f"gamelogic get gamestate {self._game_state}")
         return self._game_state
     
     def get_board(self):
