@@ -49,14 +49,12 @@ class PlayerConsole(PlayerBase):
 
         Ansi.set_foreground(self._base_color, False)
 
-        
-
     def play_turn(self) -> int:
         Ansi.set_foreground( self._player_color, False)
         pos = self.select_column()
 
         Ansi.set_foreground(self._base_color, False)
-        return(pos)
+        return pos
 
     def select_column(self):
         pos = 3

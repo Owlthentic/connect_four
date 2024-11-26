@@ -18,12 +18,33 @@ class GameLogicClient(GameLogicBase):
         return response.json().get("board")
 
     def get_state(self) -> GameState:
-        # IMPLEMENT METHOD HERE!
-        return GameState.TURN_RED
+        try:
+            # call remote API
+            response = requests.get( f"{self._url}/state")
+            print(f"Response Text: {response.text}, Response Status Code: {response.status_code}")  
+            # return result to local caller
+            return response.json().get("game_state")
+        except requests.exceptions.JSONDecodeError as e:
+            print("JSONDecodeError:", e)
+            return None
+        except Exception as e:
+            print(f"Error in get_state: {e}")
+            return None
 
     def drop_token(self, player, column) -> DropState:
-        # IMPLEMENT METHOD HERE
-        return DropState.DROP_OK
+        # post to remote API
+        post_drop = { "player_id": player.value, "column": column}
+        print(f"Post Data {post_drop}")
+        try:        
+            response = requests.post( f"{self._url}/drop", json=post_drop)
+            print(f"Response Text: {response.text}, Response Status Code: {response.status_code}") 
+            return response.json().get("drop_state")
+        except requests.exceptions.JSONDecodeError as e:
+            print("JSONDecodeError:", e)
+            return None
+        except Exception as e:
+            print(f"Error in get_state: {e}")
+            return None
 
 
 if __name__ == '__main__':
@@ -42,14 +63,16 @@ if __name__ == '__main__':
         print( f"GameState: {state}" )
 
     client = GameLogicClient("127.0.0.1")
+    
     while( True ):
         game_state = client.get_state()
         board = client.get_board()
 
-        draw_board( board, game_state )
+        draw_board(board, game_state)
 
-        if game_state == GameState.TURN_RED or  game_state == GameState.TURN_YELLOW:
-            player = GameToken.RED if game_state == GameState.TURN_RED else GameToken.YELLOW  
+        if game_state == GameState.TURN_RED.value or  game_state == GameState.TURN_YELLOW.value:
+            player = GameToken.RED if game_state == 0 else GameToken.YELLOW
+            print( f"It is {player}'s turn" )  
             column = int(input("Which colum to drop? "))    
             drop_state = client.drop_token( player, column )
             print( "drop_state:", drop_state )

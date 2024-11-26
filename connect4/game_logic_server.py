@@ -1,6 +1,6 @@
 from game_logic import GameLogic
-from game_state import GameState
-from drop_state import DropState
+#from game_state import GameState
+#from drop_state import DropState
 from flask import Flask, request, jsonify
 from flasgger import Swagger
 
@@ -97,8 +97,9 @@ if __name__ == "__main__":
                             description: The current state of the game, represented as integer number [0..4]
                             example: 1
         """
-        # IMPLEMENT GET /api/state HERE
-        return jsonify({"game_state": "not implemented!"}), 501 # status code: 501: Not implemented
+        # GET /api/state
+        state = game.get_state()
+        return jsonify({"game_state": state.value}), 200 # # status code: 200 Ok
 
     @app.route('/api/drop', methods=['POST'])
     def drop_token():
@@ -163,8 +164,17 @@ if __name__ == "__main__":
                             description: Textual desription of the error.
                             example: Fields 'player_id' and/or 'column' missing in request body.
         """
-        # IMPLEMENT POST /api/drop HERE!
-        return jsonify({"drop_state": "not implemented!"}), 501
+        # POST /api/drop HERE!
+        drop_data = request.get_json()
+        print(type(drop_data))
+        print("Received Data: ", drop_data)
+        if drop_data.get("player_id") is None or drop_data.get("column") is None:
+            return jsonify({"Error": "Fields 'player_id' and/or 'column' missing in request body."}), 400 # missing player id or column
+        else:
+            player_id = drop_data.get("player_id")
+            column = drop_data.get("column")
+            drop = game.drop_token(player_id, column).value
+            return jsonify({"drop_state": drop}), 200
     
     
     # starting the server on all interfaces
