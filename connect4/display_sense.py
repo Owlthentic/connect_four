@@ -1,13 +1,6 @@
 from display_base import DisplayBase
-from input_console import InputConsole
-from player_base import PlayerBase
-from game_state import GameState
 from game_token import GameToken
-from ansi import Ansi
-from connect4.input_sense import Keys
-import os
 from sense_hat import SenseHat
-from time import sleep
 
 # Farben definieren
 RED = [255, 0, 0]       # Rot für roten Spieler
@@ -20,6 +13,7 @@ class DisplaySense(DisplayBase):
         self._sense = SenseHat()  # SenseHat-Instanz erstellen
         self._display = []
         self._grid = self.gen_grid()
+        self._prev_column = 3
 
     def _update_screen(self):
         # Display an Sense HAT senden
@@ -53,8 +47,13 @@ class DisplaySense(DisplayBase):
         self.display[y_pos + 2][x_pos] = color
         self._update_screen()
 
-    def draw_input(self, token):
-        pass
+    def clear_input(self):
+        self.display[1][self._prev_column] = BLACK
+
+    def draw_input(self, column, token):
+        self.clear_input()
+        self.draw_token(column, -1, token)
+        self._prev_column = column
 
 
 if __name__ == "__main__":

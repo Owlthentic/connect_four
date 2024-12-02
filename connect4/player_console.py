@@ -4,8 +4,7 @@ from player_base import PlayerBase
 from game_state import GameState
 from game_token import GameToken
 from ansi import Ansi
-from connect4.input_sense import Keys
-import os
+from input_base import Keys
 
 
 class PlayerConsole(PlayerBase):

@@ -1,18 +1,15 @@
-from input_console import InputConsole
+from input_sense import InputSense
 from display_sense import DisplaySense
 from player_base import PlayerBase
 from game_state import GameState
 from game_token import GameToken
-from ansi import Ansi
-from connect4.input_sense import Keys
-import os
+from input_base import Keys
 
-
-class PlayerConsole(PlayerBase):
+class PlayerSense(PlayerBase):
     def __init__(self, player: GameToken):  # Red or Yellow player
         super().__init__(player)
-        self.display_console = DisplaySense()
-        self._input = InputConsole()
+        self.display_sense = DisplaySense()
+        self._input = InputSense()
         
         self._base_color = 0
         if player == GameToken.RED:
@@ -25,11 +22,11 @@ class PlayerConsole(PlayerBase):
 
     def draw_board(self, board:list, gamestate:GameState):
 
-        self.display_console.draw_grid()
+        self.display_sense.draw_grid()
         
         for y_pos, row in enumerate(board):
             for x_pos, cell in enumerate(row):
-                self.display_console.draw_token(x_pos, y_pos, cell)
+                self.display_sense.draw_token(x_pos, y_pos, cell)
         
         if gamestate == 0:
             pass
@@ -42,8 +39,6 @@ class PlayerConsole(PlayerBase):
             pass
         elif gamestate == 4:
             pass
-            
-
 
     def play_turn(self) -> int:
         pos = self.select_column()
@@ -53,10 +48,9 @@ class PlayerConsole(PlayerBase):
     def select_column(self):
         pos = 3
         key_pressed = Keys.UNKNOWN
-        while key_pressed != Keys.ESC:
-            self.display_console.draw_input(pos)
+        while True:
+            self.display_sense.draw_input(pos, self._player)
             key_pressed = self._input.read_key()
-            print(key_pressed)
 
             if key_pressed == Keys.RIGHT and pos < 6:
                 pos += 1
@@ -66,14 +60,13 @@ class PlayerConsole(PlayerBase):
             
             elif key_pressed == Keys.ENTER or key_pressed == Keys.DOWN:
                 return pos
-            
-        print("pressed Escape")  
+
 
 if __name__ == '__main__':
     board = [[' ' for _ in range(7)] for _ in range(6)]
     board[5][0] = GameToken.RED  # [Y][X]
     board[4][3] = GameToken.YELLOW
-    p = PlayerConsole(GameToken.YELLOW)
+    p = PlayerSense(GameToken.YELLOW)
 
     p.draw_board(board, GameState.TURN_YELLOW)
     pos = p.play_turn()
