@@ -6,6 +6,7 @@ import os
 class DisplayConsole(DisplayBase):
     def __init__(self):
         self.gen_grid()
+        self._grid = self.gen_grid()
 
     def _clear_console(self):
         os.system('clear')
@@ -20,7 +21,7 @@ class DisplayConsole(DisplayBase):
         row += middle + spacer + right
         return row
     
-        
+    
     def gen_grid(self):
         horizontal_spacer = "───"
         void_spacer = "   "
@@ -30,14 +31,16 @@ class DisplayConsole(DisplayBase):
         bottom_row = self.gen_row("└", "┴", "┘", horizontal_spacer)
         spacer = self.gen_row("│", "│", "│", void_spacer)
 
-        self.grid = ""
-        self.grid += top_row + "\n"
-        self.grid += spacer + "\n"
+        grid = ""
+        grid += top_row + "\n"
+        grid += spacer + "\n"
 
         for row_1 in range(6-1):
-            self.grid += middle_row + "\n"
-            self.grid += spacer + "\n"
-        self.grid += bottom_row
+            grid += middle_row + "\n"
+            grid += spacer + "\n"
+        grid += bottom_row
+
+        return grid
 
 
     def draw_grid(self):
@@ -46,7 +49,7 @@ class DisplayConsole(DisplayBase):
         Ansi.reset()
 
         Ansi.gotoXY(0, 3)
-        print(self.grid)
+        print(self._grid)
 
         Ansi.gotoXY(0, 16)
         

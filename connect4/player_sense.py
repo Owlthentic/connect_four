@@ -1,5 +1,5 @@
 from input_console import InputConsole
-from display_console import DisplayConsole
+from display_sense import DisplaySense
 from player_base import PlayerBase
 from game_state import GameState
 from game_token import GameToken
@@ -11,7 +11,7 @@ import os
 class PlayerConsole(PlayerBase):
     def __init__(self, player: GameToken):  # Red or Yellow player
         super().__init__(player)
-        self.display_console = DisplayConsole()
+        self.display_console = DisplaySense()
         self._input = InputConsole()
         
         self._base_color = 0
@@ -26,47 +26,28 @@ class PlayerConsole(PlayerBase):
     def draw_board(self, board:list, gamestate:GameState):
 
         self.display_console.draw_grid()
-
+        
         for y_pos, row in enumerate(board):
             for x_pos, cell in enumerate(row):
-                if cell == GameToken.RED:
-                    Ansi.set_foreground(1, False)
-                    self.display_console.draw_token(x_pos, y_pos)
-                if cell == GameToken.YELLOW:
-                    Ansi.set_foreground(3, False)
-                    self.display_console.draw_token(x_pos, y_pos)
-                else:
-                    pass
+                self.display_console.draw_token(x_pos, y_pos, cell)
         
         if gamestate == 0:
-            Ansi.set_foreground(self._base_color, False)
-            print("Es ist der Zug von ", end="")
-            Ansi.set_foreground(self._player_color, False)
-            print("Rot")
+            pass
         elif gamestate == 1:
-            Ansi.set_foreground(self._base_color, False)
-            print("Es ist der Zug von ", end="")
-            Ansi.set_foreground(self._player_color, False)
+            pass
             print("Gelb")
         elif gamestate == 2:
-            print("Rot hat gewonnen!!")
-            Ansi.set_foreground(self._player_color, False)
+            pass
         elif gamestate == 3:
-            print("Gelb hat gewonnen!!")
-            Ansi.set_foreground(self._player_color, False)
+            pass
         elif gamestate == 4:
-            Ansi.set_foreground(self._base_color, False)
-            print("Unentschieden...")
-            Ansi.set_foreground(self._player_color, False)
+            pass
             
 
-        Ansi.set_foreground(self._base_color, False)
 
     def play_turn(self) -> int:
-        Ansi.set_foreground( self._player_color, False)
         pos = self.select_column()
 
-        Ansi.set_foreground(self._base_color, False)
         return pos
 
     def select_column(self):
@@ -75,6 +56,7 @@ class PlayerConsole(PlayerBase):
         while key_pressed != Keys.ESC:
             self.display_console.draw_input(pos)
             key_pressed = self._input.read_key()
+            print(key_pressed)
 
             if key_pressed == Keys.RIGHT and pos < 6:
                 pos += 1
@@ -96,6 +78,3 @@ if __name__ == '__main__':
     p.draw_board(board, GameState.TURN_YELLOW)
     pos = p.play_turn()
     print(pos)
-
-
-

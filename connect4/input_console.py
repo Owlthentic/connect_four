@@ -1,5 +1,5 @@
-from input_base import InputBase
-from input_base import Keys
+from connect4.input_base import InputBase
+from connect4.input_base import Keys
 from enum import Enum
 import os
 from time import sleep
