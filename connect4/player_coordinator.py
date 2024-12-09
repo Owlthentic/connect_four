@@ -26,7 +26,7 @@ class PlayerCoordinator:
         #TODO: Console or Sensehat?
         
         #Which is your GameColor?
-        self._player = input("Was ist deine Spielerfarbe? Rot (r) oder Gelb (g)")
+        self._player = input("Was ist deine Spielerfarbe? Rot (r) oder Gelb (g)? ")
         if self._player.lower() == "r":
             self._player = self._player_red
             self._myturn = 0
@@ -52,7 +52,6 @@ class PlayerCoordinator:
 
             gamestate = self._game_logic.get_state()
             self._current_player.draw_board(self._game_logic.get_board(), self._game_logic.get_state())
-            print(f"Mein Token : {self._mytoken.value}")
 
 
             if gamestate == GameState.WON_RED or gamestate == GameState.WON_YELLOW or gamestate == GameState.DRAW:
@@ -67,8 +66,7 @@ class PlayerCoordinator:
             
             
             elif gamestate == self._myturn:
-                self._current_player = self._player
-                print(f"Am Zug ist Spieler {self._player}")   
+                self._current_player = self._player 
                 column_to_drop = self._player.play_turn()  # get the move of the player
                 drop_state = self._game_logic.drop_token(self._mytoken, column_to_drop)
                 if drop_state == DropState.DROP_OK.value:
