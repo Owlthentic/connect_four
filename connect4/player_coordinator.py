@@ -34,7 +34,7 @@ class PlayerCoordinator:
         elif self._player.lower() == "g":
             self._player = self._player_yellow
             self._myturn = 1
-            self._myturn = GameToken.YELLOW
+            self._mytoken = GameToken.YELLOW
             print("Du bist Gelb")
         
         else:
@@ -71,7 +71,10 @@ class PlayerCoordinator:
                 column_to_drop = self._player_red.play_turn()  # get the move of the player
                 drop_state = self._game_logic.drop_token(self._mytoken, column_to_drop)
                 if drop_state == DropState.DROP_OK.value:
-                    self._current_player = self._player_yellow
+                    if self._current_player == self._player_red:
+                        self._current_player = self._player_yellow
+                    else:
+                        self._current_player = self._player_red
                 else:
                     print("Das hat nicht geklappt, versuch's noch einmal")
                     continue
