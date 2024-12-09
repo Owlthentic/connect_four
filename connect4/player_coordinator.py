@@ -45,8 +45,7 @@ class PlayerCoordinator:
                     self._game_logic.reset_board()
                 
             else:
-                print("Das Spiel wird beendet.")
-                break
+                pass
 
            
             self._player_red.draw_board(self._game_logic.get_board(), self._game_logic.get_state())
