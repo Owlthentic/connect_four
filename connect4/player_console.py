@@ -51,15 +51,18 @@ class PlayerConsole(PlayerBase):
         elif gamestate == 2:
             Ansi.set_foreground(1, False)
             print("Rot hat gewonnen!!")
-            Ansi.set_foreground(self._player_color, False)
+            Ansi.set_foreground(self._base_color, False)
+            print("Noch eine Runde? (j/n)")
         elif gamestate == 3:
             Ansi.set_foreground(3, False)
             print("Gelb hat gewonnen!!")
-            Ansi.set_foreground(self._player_color, False)
+            Ansi.set_foreground(self._base_color, False)
+            print("Noch eine Runde? (j/n)")
         elif gamestate == 4:
             Ansi.set_foreground(self._base_color, False)
             print("Unentschieden...")
-            Ansi.set_foreground(self._player_color, False)
+            Ansi.set_foreground(self._base_color, False)
+            print("Noch eine Runde? (j/n)")
             
 
         Ansi.set_foreground(self._base_color, False)
