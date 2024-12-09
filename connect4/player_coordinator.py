@@ -11,9 +11,7 @@ import time
 class PlayerCoordinator:
     def __init__(self):
         # initialize players
-        self._player_red = PlayerConsole(GameToken.RED)  # X
-        self._player_yellow = PlayerConsole(GameToken.YELLOW)  # 0
-        self._current_player = self._player_red  # player to start the game
+        self._current_player = None  # player to start the game
     
         self._player = None
         self._myturn = None
@@ -24,18 +22,14 @@ class PlayerCoordinator:
         self._board = self._game_logic.get_board() #get board
     
     def __setup__(self):
-        #TODO: Console or Sensehat?
-        
-        #Which is your GameColor?
-        self._player = input("Was ist deine Spielerfarbe? Rot (r) oder Gelb (g)? ")
-        if self._player.lower() == "r":
-            self._player = self._player_red
+        #Choose player color
+        self._color = input("Was ist deine Spielerfarbe? Rot (r) oder Gelb (g)? ")
+        if self._color.lower() == "r":
             self._myturn = 0
             self._mytoken = GameToken.RED
             print("Du bist Rot")
         
-        elif self._player.lower() == "g":
-            self._player = self._player_yellow
+        elif self._color.lower() == "g":
             self._myturn = 1
             self._mytoken = GameToken.YELLOW
             print("Du bist Gelb")
@@ -43,6 +37,23 @@ class PlayerCoordinator:
         else:
             print("Falsche Eingabe")
             self.__setup__()
+        
+        #Choose display mode
+        self._display = input("Wo spielst du? Auf Konsole (c) oder dem SenseHat (s)? ")
+        
+        if self._display == "c":
+            self._player = PlayerConsole(self._mytoken) # initialize Player on Console
+        
+        elif self._display == "s":
+            self._player = PlayerSense(self._mytoken) # initialize Player on SenseHat
+        
+        else:
+            print("Falsche Eingabe")
+        
+        if self._mytoken == GameToken.RED: # make sure player red starts first
+                self._current_player = self._player
+
+        
             
 
     def run(self):
@@ -59,8 +70,8 @@ class PlayerCoordinator:
                 print("Noch eine Runde? j/n")
                 response = input()
                 if response.lower() == "j":
-                    self._game_logic.reset()
-                    self._current_player = self._player_red
+                    self._game_logic.reset_board()
+                    self._current_player = None
                 else:
                     print("Spiel wird beendet.")
                     break
@@ -71,10 +82,10 @@ class PlayerCoordinator:
                 column_to_drop = self._player.play_turn()  # get the move of the player
                 drop_state = self._game_logic.drop_token(self._mytoken, column_to_drop)
                 if drop_state == DropState.DROP_OK.value:
-                    if self._current_player == self._player_red:
-                        self._current_player = self._player_yellow
+                    if self._mytoken == GameToken.RED:
+                        gamestate = GameState.TURN_YELLOW
                     else:
-                        self._current_player = self._player_red
+                        gamestate = GameState.TURN_RED
                 else:
                     print("Das hat nicht geklappt, versuch's noch einmal")
                     continue
