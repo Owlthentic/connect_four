@@ -1,11 +1,12 @@
 from player_console import PlayerConsole
-from player_sense import PlayerSense
+
 from game_token import GameToken
 from game_state import GameState
 from drop_state import DropState
 from game_logic_client import GameLogicClient
 from ansi import Ansi
 import time
+from util import Util
 
 
 class PlayerCoordinator:
@@ -38,17 +39,21 @@ class PlayerCoordinator:
             print("Falsche Eingabe")
             self.__setup__()
         
-        #Choose display mode
-        self._display = input("Wo spielst du? Auf Konsole (c) oder dem SenseHat (s)? ")
-        
-        if self._display == "c":
-            self._player = PlayerConsole(self._mytoken) # initialize Player on Console
-        
-        elif self._display == "s":
-            self._player = PlayerSense(self._mytoken) # initialize Player on SenseHat
-        
+        #Choose display mode if playing on Raspberry
+        if Util.isRaspberry():
+            from player_sense import PlayerSense
+            self._display = input("Wo spielst du? Auf Konsole (c) oder dem SenseHat (s)? ")
+            
+            if self._display == "c":
+                self._player = PlayerConsole(self._mytoken) # initialize Player on Console
+            
+            elif self._display == "s":
+                self._player = PlayerSense(self._mytoken) # initialize Player on SenseHat
+            
+            else:
+                print("Falsche Eingabe")
         else:
-            print("Falsche Eingabe")
+            self._player = PlayerConsole(self._mytoken)
         
         if self._mytoken == GameToken.RED: # make sure player red starts first
                 self._current_player = self._player
@@ -59,11 +64,14 @@ class PlayerCoordinator:
     def run(self):
         # play game until won or draw
         self.__setup__()
+        if Util.isRaspberry():
+            from player_sense import PlayerSense
+    
     
         while (True):   
 
             gamestate = self._game_logic.get_state()
-            self._current_player.draw_board(self._game_logic.get_board(), self._game_logic.get_state())
+            self._player.draw_board(self._game_logic.get_board(), self._game_logic.get_state())
 
 
             if gamestate == GameState.WON_RED or gamestate == GameState.WON_YELLOW or gamestate == GameState.DRAW:
