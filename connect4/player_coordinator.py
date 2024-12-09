@@ -13,6 +13,7 @@ class PlayerCoordinator:
         self._player_red = PlayerConsole(GameToken.RED)  # X
         self._player_yellow = PlayerConsole(GameToken.YELLOW)  # 0
         self._current_player = self._player_red  # player to start the game
+        self._myturn = None
         self._mytoken = None
 
         # initialize game
@@ -26,12 +27,14 @@ class PlayerCoordinator:
         self._player = input("Was ist deine Spielerfarbe? Rot (r) oder Gelb (g)")
         if self._player.lower() == "r":
             self._player = self._player_red
-            self._mytoken = 0
+            self._myturn = 0
+            self._mytoken = GameToken.RED
             print("Du bist Rot")
         
         elif self._player.lower() == "g":
             self._player = self._player_yellow
-            self._mytoken = 1
+            self._myturn = 1
+            self._myturn = GameToken.YELLOW
             print("Du bist Gelb")
         
         else:
@@ -42,14 +45,14 @@ class PlayerCoordinator:
     def run(self):
         # play game until won or draw
         self.__setup__()
-        print(f"Aktueller Spieler: {self._current_player}")
-
+    
         while (True):   
 
             gamestate = self._game_logic.get_state()
             print(f"Gamestate {gamestate}")
             self._current_player.draw_board(self._game_logic.get_board(), self._game_logic.get_state())
             print(f"Aktueller Spieler: {'Rot' if self._current_player == self._player_red else 'Gelb'}")
+            print(f"Mein Token : {self._mytoken.value}")
 
 
             if gamestate == GameState.WON_RED or gamestate == GameState.WON_YELLOW or gamestate == GameState.DRAW:
@@ -63,10 +66,10 @@ class PlayerCoordinator:
                     break
             
             
-            elif gamestate == self._mytoken:
+            elif gamestate == self._myturn:
                 self._current_player = self._player_red   
                 column_to_drop = self._player_red.play_turn()  # get the move of the player
-                drop_state = self._game_logic.drop_token(GameToken.RED, column_to_drop)
+                drop_state = self._game_logic.drop_token(self._mytoken, column_to_drop)
                 if drop_state == DropState.DROP_OK.value:
                     self._current_player = self._player_yellow
                 else:
