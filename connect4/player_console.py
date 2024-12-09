@@ -49,9 +49,11 @@ class PlayerConsole(PlayerBase):
             Ansi.set_foreground(self._player_color, False)
             print("Gelb")
         elif gamestate == 2:
+            Ansi.set_foreground(1, False)
             print("Rot hat gewonnen!!")
             Ansi.set_foreground(self._player_color, False)
         elif gamestate == 3:
+            Ansi.set_foreground(3, False)
             print("Gelb hat gewonnen!!")
             Ansi.set_foreground(self._player_color, False)
         elif gamestate == 4:
