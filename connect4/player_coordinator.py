@@ -4,6 +4,7 @@ from game_state import GameState
 from drop_state import DropState
 from game_logic_client import GameLogicClient
 from ansi import Ansi
+from input_console import InputConsole
 
 
 class PlayerCoordinator:
@@ -33,18 +34,19 @@ class PlayerCoordinator:
     def run(self):
         # play game until won or draw
         while (True):
-
+            board = self._game_logic.get_board()
             gamestate = self._game_logic.get_state()
+            
             if gamestate == GameState.WON_RED or gamestate == GameState.WON_YELLOW or gamestate == GameState.DRAW:
                 print("Noch eine Runde? (j/n)")
                 response = input()  # Programm waiting for user input
-                if response.value == "j":
+                if response.lower() == "j":
                     print("Eine neue Runde beginnt!")
                     self._game_logic.reset_board()
                 
             else:
                 print("Das Spiel wird beendet.")
-                # Hier kannst du den Code einfügen, um das Spiel zu beenden
+                break
 
            
             self._player_red.draw_board(self._game_logic.get_board(), self._game_logic.get_state())
