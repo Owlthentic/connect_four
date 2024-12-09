@@ -1,74 +1,63 @@
 from display_base import DisplayBase
-from input_console import InputConsole
-from player_base import PlayerBase
-from game_state import GameState
 from game_token import GameToken
-from ansi import Ansi
-from input_base import Keys
-import os
 from sense_hat import SenseHat
-from time import sleep
 
-class SenseHatConsole(PlayerBase):
-    def __init__(self, player: GameToken):  # Red or Yellow player
-        super().__init__(player)
+# Farben definieren
+RED = [255, 0, 0]       # Rot für roten Spieler
+YELLOW = [255, 255, 0]  # Gelb für gelben Spieler
+WHITE = [100, 100, 100] # Weiß für leere Felder
+BLACK = [0, 0, 0]       # Schwarz für Hintergrund
+
+class DisplaySense(DisplayBase):
+    def __init__(self):
         self._sense = SenseHat()  # SenseHat-Instanz erstellen
-        self._input = InputConsole()
+        self._display = []
+        self._grid = self.gen_grid()
+        self._prev_column = 3
 
-    def draw_board(self, board: list, state: GameState):
-        # Farben definieren
-        RED = [255, 0, 0]       # Rot für roten Spieler
-        YELLOW = [255, 255, 0]  # Gelb für gelben Spieler
-        WHITE = [255, 255, 255] # Weiß für leere Felder
-        BLACK = [0, 0, 0]       # Schwarz für Hintergrund
-
-        # Sense-HAT-Display vorbereiten
-        display = [[BLACK for _ in range(8)] for _ in range(8)]
-
-        # 4-Gewinnt-Spielfeld unten links (6x7)
-        for y in range(6):  # Zeilen des Spielfelds
-            for x in range(7):  # Spalten des Spielfelds
-                if board[y][x] == GameToken.RED:
-                    display[7 - y][x] = RED  # Token des roten Spielers
-                elif board[y][x] == GameToken.YELLOW:
-                    display[7 - y][x] = YELLOW  # Token des gelben Spielers
-                else:
-                    display[7 - y][x] = WHITE  # Leeres Feld
-
+    def _update_screen(self):
         # Display an Sense HAT senden
-        flat_display = sum(display, [])  # 2D-Array in 1D-Array umwandeln
+        flat_display = sum(self.display, [])  # 2D-Array in 1D-Array umwandeln
         self._sense.set_pixels(flat_display)
 
-        # Statusanzeige in der Konsole
-        if state == GameState.TURN_YELLOW:
-            print("Es ist der Zug von Gelb")
-        elif state == GameState.TURN_RED:
-            print("Es ist der Zug von Rot.")
+    def gen_grid(self):
+        # clear screen
+        grid = [[BLACK for _ in range(8)] for _ in range(8)]
 
-#----------------------------------------------------
+        # create play-area
+        for y in range(2, 6+2):
+            for x in range(7):
+                grid[y][x] = WHITE
 
-"""class PlayerCoordinator:
-    def __init__(self):
-        # initialize players
-        self._player_red = SenseHatConsole(GameToken.RED)  # X
-        self._player_yellow = SenseHatConsole(GameToken.YELLOW)  # 0
-        self._board = [[GameToken.EMPTY for _ in range(7)] for _ in range(6)]
-        self._state = GameState.TURN_RED
+        return grid
 
-    def drop_token(self, player: GameToken, column: int) -> DropState:
-        # TODO check if the column is valid (0..6) => return the appropriate DropState
-        if column < 0 or column > 6:
-            return DropState.COLUMN_INVALID
-        
-        # TODO check if the column is full => return the appropriate DropState
-        elif self._board[0][column]  != GameToken.EMPTY:
-            return DropState.COLUMN_FULL
+    def draw_grid(self):
+        # clear screen
+        self.display = self._grid
+        self._update_screen()
 
-        # TODO insert token into board (column = column_to_drop)      
+    def draw_token(self, x_pos, y_pos, token):
+        if token == GameToken.RED:
+            color = RED
+        elif token == GameToken.YELLOW:
+            color = YELLOW
         else:
-            for row in range(5, -1, -1):
-                if self._board[row][column] == GameToken.EMPTY:
-                    self._board[row][column] = player  
-                    return DropState.DROP_OK """
+            color = WHITE
+        
+        self.display[y_pos + 2][x_pos] = color
+        self._update_screen()
 
-#ToDo Methode: Joystick input --> Inputs are the same as the arrow keys
+    def clear_input(self):
+        self.display[1][self._prev_column] = BLACK
+
+    def draw_input(self, column, token):
+        self.clear_input()
+        self.draw_token(column, -1, token)
+        self._prev_column = column
+
+
+if __name__ == "__main__":
+    fc = DisplaySense()
+    fc.draw_grid()
+    fc.draw_token(0, 0, GameToken.RED)
+    fc.draw_token(5, 2, GameToken.YELLOW)

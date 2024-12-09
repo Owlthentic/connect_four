@@ -5,7 +5,6 @@ from game_state import GameState
 from game_token import GameToken
 from ansi import Ansi
 from input_base import Keys
-import os
 
 
 class PlayerConsole(PlayerBase):

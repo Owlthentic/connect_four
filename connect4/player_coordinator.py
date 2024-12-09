@@ -1,4 +1,5 @@
 from player_console import PlayerConsole
+from player_sense import PlayerSense
 from game_token import GameToken
 from game_state import GameState
 from drop_state import DropState
