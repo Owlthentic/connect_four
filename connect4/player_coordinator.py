@@ -12,19 +12,45 @@ class PlayerCoordinator:
         # initialize players
         self._player_red = PlayerConsole(GameToken.RED)  # X
         self._player_yellow = PlayerConsole(GameToken.YELLOW)  # 0
-        self._current_player = self._player_red
+        self._current_player = self._player_red  # player to start the game
+        self._mytoken = None
 
         # initialize game
         self._game_logic = GameLogicClient("127.0.0.1")
         self._board = self._game_logic.get_board() #get board
+    
+    def __setup__(self):
+        #TODO: Console or Sensehat?
         
+        #Which is your GameColor?
+        self._player = input("Was ist deine Spielerfarbe? Rot (r) oder Gelb (g)")
+        if self._player.lower() == "r":
+            self._player = self._player_red
+            self._mytoken = 0
+            print("Du bist Rot")
+        
+        elif self._player.lower() == "g":
+            self._player = self._player_yellow
+            self._mytoken = 1
+            print("Du bist Gelb")
+        
+        else:
+            print("Falsche Eingabe")
+            self.__setup__()
+            
 
     def run(self):
         # play game until won or draw
+        self.__setup__()
+        print(f"Aktueller Spieler: {self._current_player}")
+
         while (True):   
 
             gamestate = self._game_logic.get_state()
+            print(f"Gamestate {gamestate}")
             self._current_player.draw_board(self._game_logic.get_board(), self._game_logic.get_state())
+            print(f"Aktueller Spieler: {'Rot' if self._current_player == self._player_red else 'Gelb'}")
+
 
             if gamestate == GameState.WON_RED or gamestate == GameState.WON_YELLOW or gamestate == GameState.DRAW:
                 print("Noch eine Runde? j/n")
@@ -37,7 +63,8 @@ class PlayerCoordinator:
                     break
             
             
-            if self._current_player == self._player_red:
+            elif gamestate == self._mytoken:
+                self._current_player = self._player_red   
                 column_to_drop = self._player_red.play_turn()  # get the move of the player
                 drop_state = self._game_logic.drop_token(GameToken.RED, column_to_drop)
                 if drop_state == DropState.DROP_OK.value:
@@ -47,6 +74,7 @@ class PlayerCoordinator:
                     continue
             
             else:
+                print("Warte auf Spieler Gelb")
                 time.sleep(1)
 
 
