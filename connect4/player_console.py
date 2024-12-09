@@ -40,12 +40,12 @@ class PlayerConsole(PlayerBase):
         if gamestate == 0:
             Ansi.set_foreground(self._base_color, False)
             print("Es ist der Zug von ", end="")
-            Ansi.set_foreground(self._player_color, False)
+            Ansi.set_foreground(1, False)
             print("Rot")
         elif gamestate == 1:
             Ansi.set_foreground(self._base_color, False)
             print("Es ist der Zug von ", end="")
-            Ansi.set_foreground(self._player_color, False)
+            Ansi.set_foreground(3, False)
             print("Gelb")
         elif gamestate == 2:
             Ansi.set_foreground(1, False)
