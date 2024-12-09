@@ -45,6 +45,11 @@ class GameLogicClient(GameLogicBase):
         except Exception as e:
             print(f"Error in get_state: {e}")
             return None
+        
+    def reset_board(self):
+        # Setzt das Spielfeld zurück, indem alle Zellen auf None gesetzt werden
+        self.board = [[' ' for _ in range(7)] for _ in range(6)]  # Leere Zellen
+        return True  # Gibt zurück, dass das Zurücksetzen erfolgreich war
 
 
 if __name__ == '__main__':

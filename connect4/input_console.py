@@ -59,6 +59,8 @@ class InputConsole(InputBase):
                 return Keys.ESC
             elif key == b"\03":  # Ctrl+C
                 raise KeyboardInterrupt()  # Trigger a KeyboardInterrupt
+            elif key == b"j":
+                return Keys.J
             return Keys.UNKNOWN
 
         else:

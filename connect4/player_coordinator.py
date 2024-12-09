@@ -34,11 +34,17 @@ class PlayerCoordinator:
         # play game until won or draw
         while (True):
 
-            """gamestate = self._game_logic.get_state()
-            print(f"gamestate = {gamestate}")
+            gamestate = self._game_logic.get_state()
             if gamestate == GameState.WON_RED or gamestate == GameState.WON_YELLOW or gamestate == GameState.DRAW:
-                #self._end_game()
-                break"""
+                print("Noch eine Runde? (j/n)")
+                response = input()  # Programm waiting for user input
+                if response.value == "j":
+                    print("Eine neue Runde beginnt!")
+                    self._game_logic.reset_board()
+                
+            else:
+                print("Das Spiel wird beendet.")
+                # Hier kannst du den Code einfügen, um das Spiel zu beenden
 
            
             self._player_red.draw_board(self._game_logic.get_board(), self._game_logic.get_state())

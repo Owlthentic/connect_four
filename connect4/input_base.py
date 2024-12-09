@@ -12,6 +12,7 @@ class Keys(Enum):
     RIGHT = -5    # Key code for the right arrow
     ENTER = 13    # Key code for the Enter key
     ESC = 27      # Key code for the Escape key
+    J = 106       # Key code for the 'J' key
 
 
 class InputBase:
