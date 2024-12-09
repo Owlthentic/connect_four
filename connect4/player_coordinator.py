@@ -13,6 +13,7 @@ class PlayerCoordinator:
         self._player_red = PlayerConsole(GameToken.RED)  # X
         self._player_yellow = PlayerConsole(GameToken.YELLOW)  # 0
         self._current_player = self._player_red  # player to start the game
+        self._player = None
         self._myturn = None
         self._mytoken = None
 
@@ -67,8 +68,8 @@ class PlayerCoordinator:
             
             
             elif gamestate == self._myturn:
-                self._current_player = self._player_red   
-                column_to_drop = self._player_red.play_turn()  # get the move of the player
+                self._current_player = self._player   
+                column_to_drop = self._player.play_turn()  # get the move of the player
                 drop_state = self._game_logic.drop_token(self._mytoken, column_to_drop)
                 if drop_state == DropState.DROP_OK.value:
                     if self._current_player == self._player_red:
