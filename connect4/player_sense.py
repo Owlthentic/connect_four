@@ -59,6 +59,7 @@ class PlayerSense(PlayerBase):
                 pos -= 1
             
             elif key_pressed == Keys.ENTER or key_pressed == Keys.DOWN:
+                self.display_sense.clear_input()
                 return pos
 
 
