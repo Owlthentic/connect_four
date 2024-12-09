@@ -71,18 +71,14 @@ class PlayerCoordinator:
         while (True):   
 
             gamestate = self._game_logic.get_state()
+            print(f"Spielstand {gamestate}")
             self._player.draw_board(self._game_logic.get_board(), self._game_logic.get_state())
 
 
-            if gamestate == GameState.WON_RED or gamestate == GameState.WON_YELLOW or gamestate == GameState.DRAW:
-                print("Noch eine Runde? j/n")
-                response = input()
-                if response.lower() == "j":
-                    self._game_logic.reset_board()
-                    self._current_player = None
-                else:
-                    print("Spiel wird beendet.")
-                    break
+            if gamestate == GameState.WON_RED.value or gamestate == GameState.WON_YELLOW.value or gamestate == GameState.DRAW.value:
+                print("Spiel wird beendet.")
+                self._game_logic.reset_board()
+                break
             
             
             elif gamestate == self._myturn:
@@ -90,10 +86,7 @@ class PlayerCoordinator:
                 column_to_drop = self._player.play_turn()  # get the move of the player
                 drop_state = self._game_logic.drop_token(self._mytoken, column_to_drop)
                 if drop_state == DropState.DROP_OK.value:
-                    if self._mytoken == GameToken.RED:
-                        gamestate = GameState.TURN_YELLOW
-                    else:
-                        gamestate = GameState.TURN_RED
+                    gamestate = self._game_logic.get_state()
                 else:
                     print("Das hat nicht geklappt, versuch's noch einmal")
                     continue

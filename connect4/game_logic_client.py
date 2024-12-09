@@ -49,6 +49,7 @@ class GameLogicClient(GameLogicBase):
     def reset_board(self):
         # Setzt das Spielfeld zurück, indem alle Zellen auf None gesetzt werden
         self.board = [[' ' for _ in range(7)] for _ in range(6)]  # Leere Zellen
+        self.game_state = GameState.TURN_RED
         return True  # Gibt zurück, dass das Zurücksetzen erfolgreich war
 
 
