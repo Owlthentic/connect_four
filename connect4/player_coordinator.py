@@ -1,19 +1,18 @@
 from player_console import PlayerConsole
-from player_sense import PlayerSense
+
 from game_token import GameToken
 from game_state import GameState
 from drop_state import DropState
 from game_logic_client import GameLogicClient
 from ansi import Ansi
 import time
+from util import Util
 
 
 class PlayerCoordinator:
     def __init__(self):
         # initialize players
-        self._player_red = PlayerConsole(GameToken.RED)  # X
-        self._player_yellow = PlayerConsole(GameToken.YELLOW)  # 0
-        self._current_player = self._player_red  # player to start the game
+        self._current_player = None  # player to start the game
     
         self._player = None
         self._myturn = None
@@ -24,18 +23,14 @@ class PlayerCoordinator:
         self._board = self._game_logic.get_board() #get board
     
     def __setup__(self):
-        #TODO: Console or Sensehat?
-        
-        #Which is your GameColor?
-        self._player = input("Was ist deine Spielerfarbe? Rot (r) oder Gelb (g)? ")
-        if self._player.lower() == "r":
-            self._player = self._player_red
+        #Choose player color
+        self._color = input("Was ist deine Spielerfarbe? Rot (r) oder Gelb (g)? ")
+        if self._color.lower() == "r":
             self._myturn = 0
             self._mytoken = GameToken.RED
             print("Du bist Rot")
         
-        elif self._player.lower() == "g":
-            self._player = self._player_yellow
+        elif self._color.lower() == "g":
             self._myturn = 1
             self._mytoken = GameToken.YELLOW
             print("Du bist Gelb")
@@ -43,27 +38,47 @@ class PlayerCoordinator:
         else:
             print("Falsche Eingabe")
             self.__setup__()
+        
+        #Choose display mode if playing on Raspberry
+        if Util.isRaspberry():
+            from player_sense import PlayerSense
+            self._display = input("Wo spielst du? Auf Konsole (c) oder dem SenseHat (s)? ")
+            
+            if self._display == "c":
+                self._player = PlayerConsole(self._mytoken) # initialize Player on Console
+            
+            elif self._display == "s":
+                self._player = PlayerSense(self._mytoken) # initialize Player on SenseHat
+            
+            else:
+                print("Falsche Eingabe")
+        else:
+            self._player = PlayerConsole(self._mytoken)
+        
+        if self._mytoken == GameToken.RED: # make sure player red starts first
+                self._current_player = self._player
+
+        
             
 
     def run(self):
         # play game until won or draw
         self.__setup__()
+        if Util.isRaspberry():
+            from player_sense import PlayerSense
+    
     
         while (True):   
 
             gamestate = self._game_logic.get_state()
-            self._current_player.draw_board(self._game_logic.get_board(), self._game_logic.get_state())
+            print(f"Spielstand {gamestate}")
+            self._player.draw_board(self._game_logic.get_board(), self._game_logic.get_state())
 
 
-            if gamestate == GameState.WON_RED or gamestate == GameState.WON_YELLOW or gamestate == GameState.DRAW:
-                print("Noch eine Runde? j/n")
-                response = input()
-                if response.lower() == "j":
-                    self._game_logic.reset()
-                    self._current_player = self._player_red
-                else:
-                    print("Spiel wird beendet.")
-                    break
+            if gamestate == GameState.WON_RED.value or gamestate == GameState.WON_YELLOW.value or gamestate == GameState.DRAW.value:
+                print("Spiel wird beendet.")
+                self._game_logic.reset_board()
+                break
             
             
             elif gamestate == self._myturn:
@@ -71,10 +86,7 @@ class PlayerCoordinator:
                 column_to_drop = self._player.play_turn()  # get the move of the player
                 drop_state = self._game_logic.drop_token(self._mytoken, column_to_drop)
                 if drop_state == DropState.DROP_OK.value:
-                    if self._current_player == self._player_red:
-                        self._current_player = self._player_yellow
-                    else:
-                        self._current_player = self._player_red
+                    gamestate = self._game_logic.get_state()
                 else:
                     print("Das hat nicht geklappt, versuch's noch einmal")
                     continue

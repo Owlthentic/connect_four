@@ -166,8 +166,6 @@ if __name__ == "__main__":
         """
         # POST /api/drop HERE!
         drop_data = request.get_json()
-        print(type(drop_data))
-        print("Received Data: ", drop_data)
         if drop_data.get("player_id") is None or drop_data.get("column") is None:
             return jsonify({"Error": "Fields 'player_id' and/or 'column' missing in request body."}), 400 # missing player id or column
         else:
