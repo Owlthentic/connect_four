@@ -13,6 +13,7 @@ class PlayerCoordinator:
         self._player_red = PlayerConsole(GameToken.RED)  # X
         self._player_yellow = PlayerConsole(GameToken.YELLOW)  # 0
         self._current_player = self._player_red  # player to start the game
+    
         self._player = None
         self._myturn = None
         self._mytoken = None
@@ -50,9 +51,7 @@ class PlayerCoordinator:
         while (True):   
 
             gamestate = self._game_logic.get_state()
-            print(f"Gamestate {gamestate}")
             self._current_player.draw_board(self._game_logic.get_board(), self._game_logic.get_state())
-            print(f"Aktueller Spieler: {'Rot' if self._current_player == self._player_red else 'Gelb'}")
             print(f"Mein Token : {self._mytoken.value}")
 
 
@@ -68,7 +67,8 @@ class PlayerCoordinator:
             
             
             elif gamestate == self._myturn:
-                self._current_player = self._player   
+                self._current_player = self._player
+                print(f"Am Zug ist Spieler {self._player}")   
                 column_to_drop = self._player.play_turn()  # get the move of the player
                 drop_state = self._game_logic.drop_token(self._mytoken, column_to_drop)
                 if drop_state == DropState.DROP_OK.value:
@@ -81,7 +81,7 @@ class PlayerCoordinator:
                     continue
             
             else:
-                print("Warte auf Spieler Gelb")
+                print("Warte auf deinen Mitspieler")
                 time.sleep(1)
 
 
