@@ -185,7 +185,7 @@ if __name__ == "__main__":
             
             else:
             # Rufe die Methode reset_board der GameLogic-Klasse auf
-                GameLogic.reset_board()
+                game.reset_board()
                 return jsonify({"message": "Game board reset successfully"}), 200
         except Exception as e:
             return jsonify({"error": str(e)}), 500
