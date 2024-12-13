@@ -35,9 +35,9 @@ class PlayerSense(PlayerBase):
         WHITE = (255, 255, 255)
         sense = SenseHat()
 
-        if gamestate == 0:
+        if gamestate == GameState.TURN_RED.value:
             pass
-        elif gamestate == 1:
+        elif gamestate == GameState.TURN_YELLOW.value:
             pass
         elif gamestate == GameState.WON_RED.value: # winning screen for player red
             sense.clear(RED)
