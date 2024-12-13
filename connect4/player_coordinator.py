@@ -7,6 +7,7 @@ from game_logic_client import GameLogicClient
 from ansi import Ansi
 import time
 from util import Util
+from sense_hat import SenseHat
 
 
 class PlayerCoordinator:
@@ -78,6 +79,16 @@ class PlayerCoordinator:
 
             if gamestate == GameState.WON_RED.value or gamestate == GameState.WON_YELLOW.value or gamestate == GameState.DRAW.value:
                 print("Spiel wird beendet.")
+                if Util.isRaspberry(): # If the game was beeing played on the Raspberry, it will show the following winning screens
+                    YELLOW = (255, 255, 0)
+                    RED = (255, 0, 0)
+                    BLACK = (0, 0, 0)
+                    if gamestate == GameState.WON_RED.value:
+                        SenseHat.clear(RED)
+                        SenseHat.show_message("RED WINS", 0.1, BLACK, RED)
+                    else:
+                        SenseHat.clear(YELLOW)
+                        SenseHat.show_message("YELLOW WINS", 0.1, BLACK, YELLOW)
                 self._game_logic.reset_board()
                 break
             
