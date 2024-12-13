@@ -5,23 +5,72 @@ from game_token import GameToken
 import requests
 
 class GameLogicClient(GameLogicBase):
+    """
+    A client for interacting with the game logic server over a REST API.
+
+    This class enables the player coordinator to retrieve game state, game board, 
+    and execute moves in a distributed game setup.
+
+    Attributes:
+    -----------
+    _url (str): The base URL of the game logic server.
+
+    Methods:
+    -----------
+    get_board(): Retrieves the current game board from the game logic server.
+    get_state(): Retrieves the current game state from the game logic server.
+    drop_token(player, column): Drops a token in the specified column on the game board.
+    """
 
     def __init__(self, host):
+        """
+        Initialize the GameLogicClient with the given server host address.
+
+        The constructor sets up the client by constructing the base URL for API requests.
+        This URL is used to communicate with the game logic server.
+
+        Parameters:
+        -----------
+        host (str): The IP address or hostname of the server hosting the game logic API.
+        """
+        
         super().__init__()
         print( f"GameLogicClient initialized with host {host}" )
         self._url = f'http://{host}:5000/api'
 
     def get_board(self) -> list:
+        """
+        Retrieve the current game board from the game logic server.
+
+        The game board is represented as a 2D list, where each element indicates
+        the state of a cell (empty, red, or yellow).
+
+        Returns:
+        -------
+        list: The current state of the game board, represented as a list of lists.
+        """
+        
         # call remote API
         response = requests.get( f"{self._url}/board")
         # return result to locall caller
         return response.json().get("board")
 
     def get_state(self) -> GameState:
+        """
+        Retrieve the current game state from the game logic server.
+
+        The game state indicates whether it is a player's turn, or if the game 
+        has ended in a win or draw.
+
+        Returns:
+        -------
+        GameState: The current state of the game, represented as a GameState enum value. Returns None
+        if an error occurs.
+        """
+
         try:
             # call remote API
             response = requests.get( f"{self._url}/state")
-            print(f"Response Text: {response.text}, Response Status Code: {response.status_code}")  
             # return result to local caller
             return response.json().get("game_state")
         except requests.exceptions.JSONDecodeError as e:
@@ -32,12 +81,28 @@ class GameLogicClient(GameLogicBase):
             return None
 
     def drop_token(self, player, column) -> DropState:
-        # post to remote API
+
+        """
+        Drop a token in the specified column on the game board.
+
+        This method sends a request to the server to place a token in the given column 
+        and returns the result of the operation.
+
+        Parameters:
+        -----------
+        player (GameToken): The token to drop, either 'X' or 'Y'.
+        column (int): The column in which to drop the token, zero-indexed.
+
+        Returns:
+        -------
+        DropState: The result of the drop operation, represented as a DropState enum value. 
+        Returns None if an error occurs.
+        """
+
         post_drop = { "player_id": player.value, "column": column}
-        print(f"Post Data {post_drop}")
+
         try:        
             response = requests.post( f"{self._url}/drop", json=post_drop)
-            print(f"Response Text: {response.text}, Response Status Code: {response.status_code}") 
             return response.json().get("drop_state")
         except requests.exceptions.JSONDecodeError as e:
             print("JSONDecodeError:", e)
@@ -46,11 +111,6 @@ class GameLogicClient(GameLogicBase):
             print(f"Error in get_state: {e}")
             return None
         
-    def reset_board(self):
-        # Setzt das Spielfeld zurück, indem alle Zellen auf None gesetzt werden
-        self.board = [[' ' for _ in range(7)] for _ in range(6)]  # Leere Zellen
-        self.game_state = GameState.TURN_RED
-        return True  # Gibt zurück, dass das Zurücksetzen erfolgreich war
 
 
 if __name__ == '__main__':

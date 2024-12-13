@@ -7,6 +7,12 @@ from game_state import GameState
 class GameLogic(GameLogicBase):
 
     def __init__(self):
+        """
+        Initializes the game logic with an empty board and sets the game state to the first player's turn.
+
+        The constructor initializes the game board with all empty positions and sets the initial game state to
+        GameState.TURN_RED to indicate that the player with the red token is the first player to make a move.
+        """
         super().__init__()
         self._game_state = GameState.TURN_RED #initial gamestate
         self._board = [[GameToken.EMPTY for _ in range(7)] for _ in range(6)] #initial board

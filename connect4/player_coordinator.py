@@ -11,75 +11,106 @@ from util import Util
 
 
 class PlayerCoordinator:
+    """
+    This class coordinates the game, setting up the player, starting the game, and managing the game state.
+    
+    It allows a player to connect to the game server, start the game, and manage the ongoing game. 
+    It handles communication between the client (the player) and the server, tracks the current game state, 
+    and ensures the game is displayed correctly based on the chosen display mode (console or SenseHat).
+    
+    Attributes:
+    -----------
+    _current_player (Player): The player currently taking their turn. This is set during setup.
+    _player (Player): The player object that handles player input (either on the console or SenseHat).
+    _myturn (int): The state indicating whether it is the player's turn to play (as defined by GameState).
+    _mytoken (GameToken): The player's token (color: Red or Yellow), used for marking the player's moves.
+    _game_logic (GameLogicClient): The client that communicates with the game server to retrieve the game state.
+    _board (list): The current game board retrieved from the game server.
+    _color (str): The color chosen by the player (Red or Yellow).
+    _display (str): The display mode (console or SenseHat) selected by the player.
+    raspi_name (str): The IP address of the Raspberry Pi (server) hosting the game logic.
+
+    Methods:
+    --------
+    __init__(self): Initializes the game and the player.
+    __setup__(self): Configures the game and player settings.
+    run(self): Runs the game loop, managing the flow of the game.
+    """
     def __init__(self):
         """
-        Initializes the game, sets up the player and game state. 
-        prompts the user to input the IP address of the server where the game logic
-        is hosted. Initializes the game logic client and retrieves the current game board.
-        -----------------------------------------------------------------------------------
+        Initializes the game and the player, establishes a connection to the server, and loads the game board.
+        
+        The constructor prompts the user for the IP address of the server hosting the game logic. 
+        It then connects to the GameLogicClient, retrieves the current game board, and prepares the game for the player. 
+        Player settings such as color and game display options are configured later during the setup phase.
+        
+        - Prompts the user for the IP address of the game server to establish a connection.
+        - Initializes the GameLogicClient with the provided server IP and retrieves the game board.
+        
+        Attributes:
+        -----------
         _current_player (None): Placeholder for the player who will start the game.
-        This value is set later during the game setup.
-        
-        _player (None): Placeholder for the player's identifier. The player is going to be initialized 
-        within the setup-function according to the OS and depending on the chosen player-color.
+        _player (None): Placeholder for the player object that handles player input (on console or SenseHat).
+        _myturn (None): Placeholder to track if it's the player's turn.
+        _mytoken (None): Placeholder to track the player's color token (Red or Yellow).
+        _game_logic (GameLogicClient): The client used to interact with the server.
+        _board (list): The game board fetched from the server.
 
-        _myturn (None): Placeholder to track if it's this player's turn. This will be set to indicate whether it is this player's turn to make a move.
-        
-        _mytoken (None): Placeholder to track the player's color. This will be set to indicate in which color
-        the dropped token needs to be drawn
+        Methods:
+        --------
+        __init__(self): Initializes the game and the player.
+        __setup__(self): Configures the game and player settings.
+        run(self): Runs the game loop, managing the flow of the game.
         """
-        self._current_player = None # used to initialize the first player
+        self._first_player = None # used to make sure the first player is red
         self._player = None # used to initialize the player on this console or sensehat
         self._myturn = None # used to track if it's this player's turn
         self._mytoken = None # used to track the player's color
 
-        """
-        raspi_name (str): Prompts the user to enter the IP address of the server hosting
-        the game logic. This value is used to establish a connection to the game server.
-        
-        _game_logic (GameLogicClient): Initializes the game logic client with the provided IP address.
-        
-        _board (list): Retrieves the current state of the game board from the game logic client.
-        """
         raspi_name = input("Gib die IP deines Servers an: ")
         self._game_logic = GameLogicClient(raspi_name)
         self._board = self._game_logic.get_board() #get board
     
     def __setup__(self):
-        """Sets up the game by prompting the user to choose their player color and mode of displaying the game 
-        (console or sensehat). Setting the red player as first player.
-        ---------------------------------------------------------------------------------------------------
-        _color (str): Placeholder to track the player's color. Let's the player choose their color.
+        """
+        Sets up the game by allowing the player to choose their color, the display mode (console or SenseHat), 
+        and determines the first player (Red).
         
-        _myturn (enum): Placeholder to track if it's this player's turn. Set according to the values defined by 
-        the game_state class. 
+        This method configures the player by asking them to choose their color and display mode. 
+        It ensures that the Red player is set as the first player. The player is also prompted to choose 
+        whether to play on the console or the SenseHat.
         
-        _mytoken (enum): Placeholder to track the player's color. Set according to the values defined by the game_token class .
+        - Prompts the user to select their player color (Red or Yellow) and sets the player's token.
+        - Determines whether the game will be played on the console or on the SenseHat.
+        - Ensures the Red player is set as the first player.
+        
+        Attributes:
+        -----------
+        _color (str): The color selected by the player.
+        _myturn (int): The GameState value indicating if it's the player's turn.
+        _mytoken (GameToken): The token representing the player's color.
+        _display (str): The display mode selected (console or SenseHat).
+        _player (Player): The player object handling input on the selected display.
         """
         self._color = input("Was ist deine Spielerfarbe? Rot (r) oder Gelb (g)? ")
-        if self._color.lower() == "r":
+        if self._color.lower() == "r": # initialize player if red was chosen
             self._myturn = GameState.TURN_RED.value
             self._mytoken = GameToken.RED
             print("Du bist Rot")
         
-        elif self._color.lower() == "g":
+        elif self._color.lower() == "g": # initialize player if yellow was chosen
             self._myturn = 1
             self._mytoken = GameToken.YELLOW
             print("Du bist Gelb")
         
-        else:
+        else:   # catch invalid input and restart setup
             print("Falsche Eingabe")
             self.__setup__()
         
-        """
-        Setting up the appropriate game display depending on the hardware in use.
-        -----------------------------------------------------------------------------------------------
-        _display (str): In case the player is playing on a raspberry, the player is asked to choose playing
-        either  on the console or on the SenseHat. If not, the game will be played on the console. 
-        """
-        if Util.isRaspberry():
+        
+        if Util.isRaspberry(): # check if the game is played on the Raspberry
             from player_sense import PlayerSense
-            self._display = input("Wo spielst du? Auf Konsole (c) oder dem SenseHat (s)? ")
+            self._display = input("Wo spielst du? Auf Konsole (c) oder dem SenseHat (s)? ") # Let the player choose if the game is played on the console or on the SenseHat
             
             if self._display == "c":
                 self._player = PlayerConsole(self._mytoken) # initialize Player on Console
@@ -93,33 +124,36 @@ class PlayerCoordinator:
         else:
             self._player = PlayerConsole(self._mytoken)
         
-        """
-        If this player chose the red colour, this player will be set as the first player.
-        """
         if self._mytoken == GameToken.RED: # make sure player red starts first
-                self._current_player = self._player
+                self._first_player = self._player
 
 
 
     def run(self):
         """
-        Running the game loop. Continuously asks the current player to make a move or waits for the other
-        player to make a move. Exits the loop game when the game is won or drawn.
+        Runs the main game loop, continuously checking the game state and allowing the player to make a move 
+        or waiting for the opponent to play. Exits when the game is won or a draw occurs.
+        
+        This method contains the core game logic, executing in a loop to manage the flow of the game. It checks 
+        the game state regularly, displays the current game board, and waits for the player to make a move. 
+        The game ends when either a player wins or the game results in a draw.
+        
+        - Retrieves the current game state and updates the game board.
+        - Displays the current board.
+        - Ends the game if a winner is found or a draw occurs.
+        - Prompts the player to make a move if it's their turn, or waits for the opponent's move if it's not.
+        
+        Attributes:
+        -----------
+        gamestate (enum): The current state of the game (won, draw, or ongoing).
         """
         self.__setup__()
         if Util.isRaspberry(): # checking, if the game is played on the Raspberry
             from player_sense import PlayerSense # Import the PlayerSense class from the player_sense module
     
         while (True):  
-            """
-            gamestate (enum): Placeholder to track the current game state. Gets the gamestate from the game_logic_client via REST Api.
-            
-            _player.draw_board(board, gamestate): Draws the current game board.
-            
-            """ 
-            gamestate = self._game_logic.get_state()
-            self._player.draw_board(self._game_logic.get_board(), self._game_logic.get_state())
-
+            gamestate = self._game_logic.get_state() # get the current game state
+            self._player.draw_board(self._game_logic.get_board(), self._game_logic.get_state()) # draw the board
 
             """
             1. Check for a win or a draw and ends the game when the game is won or drawn
@@ -128,23 +162,9 @@ class PlayerCoordinator:
             """ 
             if gamestate == GameState.WON_RED.value or gamestate == GameState.WON_YELLOW.value or gamestate == GameState.DRAW.value:
                 print("Spiel wird beendet.")
-                """if Util.isRaspberry(): # if the game was beeing played on the Raspberry, it will show the following winning screens
-                    YELLOW = (255, 255, 0)
-                    RED = (255, 0, 0)
-                    BLACK = (0, 0, 0)
-                    WHITE = (255, 255, 255)
-                    if gamestate == GameState.WON_RED.value: # winning screen for player red
-                        SenseHat.clear(RED)
-                        SenseHat.show_message("RED WINS", 0.1, BLACK, RED)
-                    elif gamestate == GameState.WON_YELLOW.value: # winning screen for player yellow:
-                        SenseHat.clear(YELLOW)
-                        SenseHat.show_message("YELLOW WINS", 0.1, BLACK, YELLOW)
-                    else: # draw screen
-                        SenseHat.clear(BLACK)
-                        SenseHat.show_message("DRAW", 0.1, BLACK, WHITE)"""
+                self._game_logic.__init__()
                 break # exit the game loop
             
-               
             elif gamestate == self._myturn: # check if it is this player's turn
                 column_to_drop = self._player.play_turn()  # get the move of the player
                 drop_state = self._game_logic.drop_token(self._mytoken, column_to_drop) # get the drop_state which states if move is valid
