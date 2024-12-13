@@ -20,6 +20,14 @@ class GameLogicBase:
         return self._board
 
     def get_state(self) -> GameState:
+        """
+        Retrieves the current game state.
+
+        Returns:
+        -------
+        GameState: The current state of the game, represented as a GameState enum value.
+        """
+
         raise NotImplementedError("")
 
     def drop_token(self, player: GameToken, column: int) -> DropState:

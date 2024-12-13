@@ -1,6 +1,4 @@
 from game_logic import GameLogic
-#from game_state import GameState
-#from drop_state import DropState
 from flask import Flask, request, jsonify
 from flasgger import Swagger
 
@@ -174,32 +172,6 @@ if __name__ == "__main__":
             drop = game.drop_token(player_id, column).value
             return jsonify({"drop_state": drop}), 200
     
-    @app.route('/api/reset_board', methods=['POST'])
-    def reset_board():
-        """
-        Reset the game board.
-        ---
-        tags:
-        - Resetting the game
-        description: |
-            Resets the game board to its initial state, clearing all tokens.
-        responses:
-            200:
-                description: The board has been reset
-                schema:
-                    type: object
-                    properties:
-                        message:
-                            type: string
-                            description: A confirmation message indicating the board was reset
-        """
-        # Hier rufst du die Methode zum Zurücksetzen des Boards auf
-        success = game.reset_board()  # Methode im Spielobjekt, die das Spielfeld zurücksetzt
-        
-        if success:
-            return jsonify({"message": "Das Board wurde erfolgreich zurückgesetzt."}), 200
-        else:
-            return jsonify({"error": "Fehler beim Zurücksetzen des Boards."}), 500
     
     
     # starting the server on all interfaces
