@@ -131,3 +131,7 @@ class GameLogic(GameLogicBase):
             return GameState.TURN_YELLOW
         elif self._game_state == GameState.TURN_YELLOW:
             return GameState.TURN_RED
+    
+    def reset_board(self):
+        self._game_state = GameState.TURN_RED #initial gamestate
+        self._board = [[GameToken.EMPTY for _ in range(7)] for _ in range(6)] #initial board
