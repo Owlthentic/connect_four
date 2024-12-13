@@ -161,8 +161,13 @@ class PlayerCoordinator:
             3. Waits for the other player's move.
             """ 
             if gamestate == GameState.WON_RED.value or gamestate == GameState.WON_YELLOW.value or gamestate == GameState.DRAW.value:
-                print("Spiel wird beendet.")
-                self._game_logic.reset_board()
+                next_turn = input("Noch eine Runde? (j/n)")
+                if next_turn == "j":
+                    self._game_logic.reset_board()
+                    continue
+                else:
+                    print("Spiel wird beendet.")
+                    self._game_logic.reset_board()
                 break # exit the game loop
             
             elif gamestate == self._myturn: # check if it is this player's turn
