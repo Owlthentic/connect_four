@@ -164,10 +164,15 @@ class PlayerCoordinator:
                 next_turn = input("Noch eine Runde? (j/n)")
                 if next_turn == "j":
                     self._game_logic.reset_board()
+                    if Util.isRaspberry():
+                        from sense_hat import SenseHat
+                        sense = SenseHat()
+                        sense.clear()
                     continue
                 else:
                     print("Spiel wird beendet.")
                     self._game_logic.reset_board()
+                    
                 break # exit the game loop
             
             elif gamestate == self._myturn: # check if it is this player's turn
