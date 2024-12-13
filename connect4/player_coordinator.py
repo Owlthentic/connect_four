@@ -19,7 +19,8 @@ class PlayerCoordinator:
         self._mytoken = None
 
         # initialize game
-        self._game_logic = GameLogicClient("127.0.0.1")
+        raspi_name = input("Gib die IP deines Servers an: ")
+        self._game_logic = GameLogicClient(raspi_name)
         self._board = self._game_logic.get_board() #get board
     
     def __setup__(self):
