@@ -7,7 +7,7 @@ from game_logic_client import GameLogicClient
 from ansi import Ansi
 import time
 from util import Util
-from sense_hat import SenseHat
+
 
 
 class PlayerCoordinator:
@@ -99,8 +99,7 @@ class PlayerCoordinator:
         if self._mytoken == GameToken.RED: # make sure player red starts first
                 self._current_player = self._player
 
-        
-            
+
 
     def run(self):
         """
@@ -129,7 +128,7 @@ class PlayerCoordinator:
             """ 
             if gamestate == GameState.WON_RED.value or gamestate == GameState.WON_YELLOW.value or gamestate == GameState.DRAW.value:
                 print("Spiel wird beendet.")
-                if Util.isRaspberry(): # if the game was beeing played on the Raspberry, it will show the following winning screens
+                """if Util.isRaspberry(): # if the game was beeing played on the Raspberry, it will show the following winning screens
                     YELLOW = (255, 255, 0)
                     RED = (255, 0, 0)
                     BLACK = (0, 0, 0)
@@ -142,12 +141,11 @@ class PlayerCoordinator:
                         SenseHat.show_message("YELLOW WINS", 0.1, BLACK, YELLOW)
                     else: # draw screen
                         SenseHat.clear(BLACK)
-                        SenseHat.show_message("DRAW", 0.1, BLACK, WHITE)
+                        SenseHat.show_message("DRAW", 0.1, BLACK, WHITE)"""
                 break # exit the game loop
             
                
             elif gamestate == self._myturn: # check if it is this player's turn
-                #self._current_player = self._player 
                 column_to_drop = self._player.play_turn()  # get the move of the player
                 drop_state = self._game_logic.drop_token(self._mytoken, column_to_drop) # get the drop_state which states if move is valid
                 if drop_state == DropState.DROP_OK.value: # if the drop_state is okay, calculate the gamestate

@@ -4,6 +4,7 @@ from player_base import PlayerBase
 from game_state import GameState
 from game_token import GameToken
 from input_base import Keys
+from sense_hat import SenseHat
 
 class PlayerSense(PlayerBase):
     def __init__(self, player: GameToken):  # Red or Yellow player
@@ -28,17 +29,26 @@ class PlayerSense(PlayerBase):
             for x_pos, cell in enumerate(row):
                 self.display_sense.draw_token(x_pos, y_pos, cell)
         
+        YELLOW = (255, 255, 0)
+        RED = (255, 0, 0)
+        BLACK = (0, 0, 0)
+        WHITE = (255, 255, 255)
+        sense = SenseHat()
+
         if gamestate == 0:
             pass
         elif gamestate == 1:
             pass
-            print("Gelb")
-        elif gamestate == 2:
-            pass
-        elif gamestate == 3:
-            pass
-        elif gamestate == 4:
-            pass
+        elif gamestate == GameState.WON_RED.value: # winning screen for player red
+            sense.clear(RED)
+            sense.show_message("RED WINS", 0.1, BLACK, RED)
+        elif gamestate == GameState.WON_YELLOW.value: # winning screen for player yellow:
+            sense.clear(YELLOW)
+            sense.show_message("YELLOW WINS", 0.1, BLACK, YELLOW)
+        else: # draw screen
+            sense.clear(BLACK)
+            sense.show_message("DRAW", 0.1, BLACK, WHITE)
+       
 
     def play_turn(self) -> int:
         pos = self.select_column()
