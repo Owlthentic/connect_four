@@ -162,7 +162,6 @@ class PlayerCoordinator:
             """ 
             if gamestate == GameState.WON_RED.value or gamestate == GameState.WON_YELLOW.value or gamestate == GameState.DRAW.value:
                 print("Spiel wird beendet.")
-                self._game_logic.__init__()
                 break # exit the game loop
             
             elif gamestate == self._myturn: # check if it is this player's turn

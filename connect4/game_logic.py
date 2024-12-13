@@ -5,6 +5,21 @@ from game_state import GameState
 
 
 class GameLogic(GameLogicBase):
+    """ 
+    The GameLogic class represents the game logic for Connect Four. It is responsible for managing the game board, 
+    checking for wins, draws, and updating the game state.
+
+    Attributes:
+    -----------
+    _board (list): A 2D list representing the current state of the game board.
+    _game_state (GameState): An enum value representing the current state of the game (e.g., WON_RED, WON_YELLOW, TURN_RED, TURN_YELLOW, DRAW).
+
+    Methods:
+    --------
+    drop_token(player, column): Drops a token in the specified column on the game board.
+    get_board(): Retrieves the current game board.
+    get_state(): Retrieves the current game state.
+    """
 
     def __init__(self):
         """
@@ -12,38 +27,80 @@ class GameLogic(GameLogicBase):
 
         The constructor initializes the game board with all empty positions and sets the initial game state to
         GameState.TURN_RED to indicate that the player with the red token is the first player to make a move.
+        
+        Attributes:
+        -----------
+        _board (list): A 2D list representing the current state of the game board.
+        _game_state (GameState): An enum value representing the current state of the game (e.g., WON_RED, WON_YELLOW, TURN_RED, TURN_YELLOW, DRAW).
         """
         super().__init__()
         self._game_state = GameState.TURN_RED #initial gamestate
         self._board = [[GameToken.EMPTY for _ in range(7)] for _ in range(6)] #initial board
 
     def drop_token(self, player: GameToken, column: int) -> DropState:
-        # TODO überprüfen ob es der richtige player ist
+        """
+        Drops a token in the specified column on the game board.
 
+        Parameters:
+        -----------
+        player (GameToken): The token to drop, either RED or YELLOW.
+        column (int): The column in which to drop the token, zero-indexed.
+
+        Returns:
+        -------
+        DropState: The result of the drop operation, represented as a DropState enum value. 
+        Returns None if an error occurs.
+        """
         # check if the column is valid (0..6) => return the appropriate DropState
-        if column not in range(0, 7):
+        if column not in range(0, 7): # invalid dropstate, if column out of range
             return DropState.COLUMN_INVALID
 
         # check if the column is full => return the appropriate DropState   
-        if self._board[0][column] != GameToken.EMPTY:
+        if self._board[0][column] != GameToken.EMPTY: # column_full dropstate, if column is full
             return DropState.COLUMN_FULL
 
         # insert token into board (column = column_to_drop) => return the appropriate DropState
         for i in range(5,-1,-1):
-            if self._board[i][column] == GameToken.EMPTY:     
-                self._board[i][column] = player
-                self._game_state = self._calculate_state()
-                return DropState.DROP_OK
+            if self._board[i][column] == GameToken.EMPTY: # look for empty cell in chosen column     
+                self._board[i][column] = player # insert token
+                self._game_state = self._calculate_state() # update gamestate
+                return DropState.DROP_OK # successful drop
         
     def get_state(self):
-        print(f"gamelogic get gamestate {self._game_state}")
+        """
+        Retrieves the current game state.
+
+        Returns:
+        -------
+        GameState: The current state of the game, represented as a GameState enum value.
+        """
         return self._game_state
     
     def get_board(self):
+        """
+        Retrieves the current game board.
+
+        Returns:
+        -------
+        list: The current state of the game board, represented as a 2D list of lists.
+        """
         return self._board
     
     def _calculate_state(self):
         # check for a win horizontally, vertically or diagonally
+        """
+        Determines and updates the current state of the game based on the board configuration.
+
+        This method evaluates the board to check if there is a winning condition (four consecutive tokens) 
+        horizontally, vertically, or diagonally for either player. If such a condition is found, it updates 
+        the game state to WON_RED or WON_YELLOW accordingly. If the board is full with no winner, it sets 
+        the game state to DRAW. If neither condition is met, it switches the turn to the other player.
+
+        Returns:
+        -------
+        GameState: The updated state of the game, indicating if a player has won, the game is a draw, or 
+        whose turn it is next.
+        """
         for row in range(6):
             for col in range(7):
                 # skip empty cells
@@ -70,7 +127,6 @@ class GameLogic(GameLogicBase):
             return GameState.DRAW
         
         #return which players turn it is
-        print("gamelogic calculate_self {self._game_state}")
         if self._game_state == GameState.TURN_RED:
             return GameState.TURN_YELLOW
         elif self._game_state == GameState.TURN_YELLOW:
