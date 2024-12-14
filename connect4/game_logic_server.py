@@ -175,8 +175,16 @@ if __name__ == "__main__":
     @app.route('/api/reset', methods=['POST'])
     def reset_board():
         """
-        Handle the reset request from the client.
-        Resets the game board and game state to their initial states.
+        This function listens for POST requests to the '/api/reset' endpoint.
+        It expects a JSON payload with a key "reset" set to True.
+        If the condition is met, the game board and state are reset to their initial values.
+        If the condition is not met or an error occurs, it responds with an appropriate error message.
+
+        Returns:
+            JSON response:
+            - On success: {"message": "Game board reset successfully"} with status 200.
+            - On failure: {"error": "Invalid request"} with status 400 or 
+                          {"error": "<exception_message>"} with status 500.
         """
         try:
             data = request.get_json()

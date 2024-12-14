@@ -134,5 +134,13 @@ class GameLogic(GameLogicBase):
     
    
     def reset_board(self):
+        """
+        Resets the game board to its initial state.
+
+        This method resets the game state to `GameState.TURN_RED` and empties the board, setting all cells to
+        `GameToken.EMPTY`.
+
+        """
+
         self._game_state = GameState.TURN_RED #reset gamestate to turn red
         self._board = [[GameToken.EMPTY for _ in range(7)] for _ in range(6)] #reset board to empty cells
