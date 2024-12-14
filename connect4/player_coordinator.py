@@ -156,12 +156,20 @@ class PlayerCoordinator:
             self._player.draw_board(self._game_logic.get_board(), self._game_logic.get_state()) # draw the board
 
             """
-            1. Check for a win or a draw and ends the game when the game is won or drawn
-            2. Ask the player to make a move, when it is his turn 
-            3. Waits for the other player's move.
+            1. Check for a win or a draw and ends the game when the game is won or drawn.
+            2. Ask the player if they want to play another game. 
+            3. Resets the board after each game.            
+            4. Ask the player to make a move, when it is his turn 
+            5. Waits for the other player's move.
             """ 
             if gamestate == GameState.WON_RED.value or gamestate == GameState.WON_YELLOW.value or gamestate == GameState.DRAW.value:
-                print("Spiel wird beendet.")
+                next_turn = input("Noch eine Runde? (j/n)") # play another game or end game
+                if next_turn == "j":
+                    self._game_logic.reset_board()
+                    continue
+                else:
+                    print("Spiel wird beendet.") # message if the player wants to end the game
+                    self._game_logic.reset_board()
                 break # exit the game loop
             
             elif gamestate == self._myturn: # check if it is this player's turn

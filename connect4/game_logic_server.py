@@ -172,6 +172,23 @@ if __name__ == "__main__":
             drop = game.drop_token(player_id, column).value
             return jsonify({"drop_state": drop}), 200
     
+    @app.route('/api/reset', methods=['POST'])
+    def reset_board():
+        """
+        Handle the reset request from the client.
+        Resets the game board and game state to their initial states.
+        """
+        try:
+            data = request.get_json()
+            if data.get("reset") != True:
+                return jsonify({"error": "Invalid request"}), 400
+            
+            else:
+            # Rufe die Methode reset_board der GameLogic-Klasse auf
+                game.reset_board()
+                return jsonify({"message": "Game board reset successfully"}), 200
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
     
     
     # starting the server on all interfaces

@@ -110,8 +110,23 @@ class GameLogicClient(GameLogicBase):
         except Exception as e:
             print(f"Error in get_state: {e}")
             return None
-        
+    
+    def reset_board(self) -> None:
+        """
+        Reset the game board to its initial state.
 
+        This method sends a request to the server to reset the game board, 
+        clearing all tokens from the board and resetting the game state to the initial state.
+
+        Returns:    
+        -------     
+        """
+        reset = {"reset" : True}
+
+        try:
+            requests.post( f"{self._url}/reset", json=reset)
+        except Exception as e:
+            print(f"Error in reset_board: {e}")
 
 if __name__ == '__main__':
     """
