@@ -7,7 +7,25 @@ from input_base import Keys
 from sense_hat import SenseHat
 
 class PlayerSense(PlayerBase):
+    """
+    Class representing the player's interaction and logical decisions in the game.
+
+    Methods:
+    - __init__(self, player: GameToken): Initializes the PlayerSense object with the specified player (Red or Yellow).
+    - draw_board(self, board: list, gamestate: GameState): Draws the game board based on the current state of the game.
+    - play_turn(self) -> int: Handles the sequence of playing a turn.
+    - select_column(self): Handles the column selection logic for the player.
+    """
     def __init__(self, player: GameToken):  # Red or Yellow player
+        """
+        Initializes a new instance of the Class.
+
+        Args:
+            player: a GameToken (enum) representing the player color, either RED or YELLOW
+
+        Returns:
+            None
+        """
         super().__init__(player)
         self.display_sense = DisplaySense()
         self._input = InputSense()
@@ -22,7 +40,16 @@ class PlayerSense(PlayerBase):
 
 
     def draw_board(self, board:list, gamestate:GameState):
+        """
+        Draws the game board based on the current state of the game.
 
+        Args:
+            board: list, the 2D list representing the game board
+            gamestate: GameState, the current state of the game
+
+        Returns:
+            None
+        """
         self.display_sense.draw_grid()
         
         for y_pos, row in enumerate(board):
@@ -51,11 +78,30 @@ class PlayerSense(PlayerBase):
        
 
     def play_turn(self) -> int:
+        """
+        This method is used to play a turn in a game.
+        It selects a column to place a game piece and returns the position of the selected column.
+
+        Args:
+            None
+
+        Returns:
+            int: The position of the selected column
+        """
         pos = self.select_column()
 
         return pos
 
     def select_column(self):
+        """
+        Get user to select a column on the display.
+
+        Args:
+            None
+
+        Returns:
+            int: The position of the selected column.
+        """
         pos = 3
         key_pressed = Keys.UNKNOWN
         while True:
