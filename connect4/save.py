@@ -29,6 +29,15 @@ class PlayerCoordinator:
         self._board = self._game_logic.get_board() #get board
     
     def __setup__(self):
+        """
+        Method to set up the game environment including choosing player color and display mode.
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
         #Choose player color
         self._color = input("Was ist deine Spielerfarbe? Rot (r) oder Gelb (g)? ")
         if self._color.lower() == "r":
@@ -68,6 +77,15 @@ class PlayerCoordinator:
             
 
     def run(self):
+        """
+        Play game until either won or draw.
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
         # play game until won or draw
         self.__setup__()
         if Util.isRaspberry():
